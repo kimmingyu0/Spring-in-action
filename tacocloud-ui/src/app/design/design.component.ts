@@ -1,14 +1,13 @@
-import { Component, OnInit, Injectable, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router/';
+import { Router } from '@angular/router';
 import { CartService } from '../cart/cart-service';
 
 @Component({
   selector: 'taco-design',
-  templateUrl: './design.component.html',
+  templateUrl: 'design.component.html',
   styleUrls: ['./design.component.css']
 })
-
 export class DesignComponent implements OnInit {
 
   model = {
@@ -17,16 +16,14 @@ export class DesignComponent implements OnInit {
   };
 
   allIngredients: any;
-  wraps = [] as any[];
-  proteins = [] as any[];
-  veggies = [] as any[];
-  cheeses = [] as any[];
-  sauces = [] as any[];
+  wraps: any[] = [];
+  proteins: any[] = [];
+  veggies: any[] = [];
+  cheeses: any[] = [];
+  sauces: any[] = [];
 
-  constructor(private httpClient: HttpClient, private router: Router, private cart: CartService) {
-  }
+  constructor(private httpClient: HttpClient, private router: Router, private cartService: CartService) { }
 
-  // tag::ngOnInit[]
   ngOnInit() {
     this.httpClient.get('http://localhost:8080/ingredientsx')
         .subscribe(data => {
@@ -38,7 +35,6 @@ export class DesignComponent implements OnInit {
           this.sauces = this.allIngredients.filter((s: any) => s.type === 'SAUCE');
         });
   }
-  // end::ngOnInit[]
 
   updateIngredients(ingredient: any, event: any) {
     if (event.target.checked) {
@@ -48,16 +44,13 @@ export class DesignComponent implements OnInit {
     }
   }
 
-  // tag::onSubmit[]
   onSubmit() {
     this.httpClient.post(
         'http://localhost:8080/design',
         this.model, {
             headers: new HttpHeaders().set('Content-type', 'application/json'),
-        }).subscribe(taco => this.cart.addToCart(taco));
+        }).subscribe(taco => this.cartService.addToCart(taco));
 
     this.router.navigate(['/cart']);
   }
-  // end::onSubmit[]
-
 }
