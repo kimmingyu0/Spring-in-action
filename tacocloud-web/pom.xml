@@ -36,6 +36,7 @@
 		</dependency>
 
 		<!-- Necessary Boot starters -->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -68,15 +69,19 @@
 			<artifactId>mustachejs</artifactId>
 			<version>2.2.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity5 -->
 		<dependency>
-    		<groupId>org.thymeleaf.extras</groupId>
-    		<artifactId>thymeleaf-extras-springsecurity5</artifactId>
-    		<version>3.1.2</version>
+		    <groupId>org.thymeleaf.extras</groupId>
+		    <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+		    <version>3.1.2.RELEASE</version>
 		</dependency>
+
+		
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -85,13 +90,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
-  		<artifactId>selenium-java</artifactId>
-  		<scope>test</scope>
+  			<artifactId>selenium-java</artifactId>
+  			<scope>test</scope>
 		</dependency>
 		<dependency>
-  		<groupId>org.seleniumhq.selenium</groupId>
-  		<artifactId>htmlunit-driver</artifactId>
-  		<scope>test</scope>
+  			<groupId>org.seleniumhq.selenium</groupId>
+  			<artifactId>htmlunit-driver</artifactId>
+  			<scope>test</scope>
 		</dependency>
 
 		<!-- For the sake of the configuration properties class -->

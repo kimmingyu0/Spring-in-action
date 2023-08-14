@@ -52,7 +52,7 @@
 		<dependency>
     		<groupId>org.springframework.hateoas</groupId>
     		<artifactId>spring-hateoas</artifactId>
-    		<version>0.25.0.RELEASE</version> <!-- 예를 들어 이전 버전을 사용 -->
+    		<version>0.25.2.RELEASE</version> 
 		</dependency>
 
 		<!-- Lombok -->
