@@ -21,7 +21,9 @@ spring:
     rest:
       base-path: /api
 
-#---
+---
+spring:
+  profiles: prod
 #spring:
 #  profiles: prod
 #  
@@ -52,9 +54,18 @@ spring:
 #    open-in-view: false
 #    show-sql: true
 #    
+
+#logging:
+#  level:
+#  org.springframework: INFO
+#logging:
+#  level:
+#    tacos: DEBUG
+
 logging:
   level:
-    tacos: WARN
+    org.hibernate: DEBUG
+
 
 
 
