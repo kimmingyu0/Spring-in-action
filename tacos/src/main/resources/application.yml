@@ -35,6 +35,8 @@ spring:
     url: "jdbc:mysql://localhost:3306/tacocloud?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&tinyInt1isBit=false"
     username: root
     password: 1234
+    
+    
     hikari:
       auto-commit: false
       connection-test-query: SELECT 1

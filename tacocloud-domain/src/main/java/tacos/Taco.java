@@ -11,6 +11,8 @@ import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import javax.persistence.FetchType;
+
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import lombok.Data;
@@ -30,7 +32,7 @@ public class Taco {
   
   private Date createdAt;
 
-  @ManyToMany(targetEntity=Ingredient.class)
+  @ManyToMany(targetEntity=Ingredient.class, fetch = FetchType.EAGER)
   @Size(min=1, message="You must choose at least 1 ingredient")
   private List<Ingredient> ingredients;
 
