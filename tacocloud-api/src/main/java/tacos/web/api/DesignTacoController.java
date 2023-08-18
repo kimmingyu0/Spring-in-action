@@ -100,7 +100,7 @@ public class DesignTacoController {
   
   @GetMapping("/{id}")
   public Taco tacoById(@PathVariable("id") Long id) {
-    Optional<Taco> optTaco = tacoRepo.findById(id);
+    Optional<Taco> optTaco = tacoRepo.findTacoById(id);
     if (optTaco.isPresent()) {
       return optTaco.get();
     }
