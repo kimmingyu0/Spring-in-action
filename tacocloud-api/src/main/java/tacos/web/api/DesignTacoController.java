@@ -24,7 +24,7 @@ import tacos.data.TacoRepository;
 @RestController
 @RequestMapping(path="/design",                      // <1>
                 produces="application/json")
-@CrossOrigin(origins="*")        // <2>
+@CrossOrigin(origins="*")        // <2> 다른 도메인의 클라이언트가 해당 RESTAPI 사용할 수 있게 해준다.
 public class DesignTacoController {
   private TacoRepository tacoRepo;
   
@@ -99,7 +99,8 @@ public class DesignTacoController {
   
   
   @GetMapping("/{id}")
-  public Taco tacoById(@PathVariable("id") Long id) {
+  public Taco tacoById(@PathVariable("id") Long id) { // @PathVariable에 의해 {id} 플레이스 홀더와
+                                                      // 대응되는 id 매개변수에 해당 요청의 실제값 지정
     Optional<Taco> optTaco = tacoRepo.findTacoById(id);
     if (optTaco.isPresent()) {
       return optTaco.get();

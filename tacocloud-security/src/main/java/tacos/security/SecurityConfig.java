@@ -25,6 +25,8 @@ public class SecurityConfig {
   @Autowired
   private UserDetailsService userDetailsService;
 
+  // HttpSecurity, WebSecurity를 원래는 WebSecurityConfigurerAdapter 상속받아 Override 하였지만,
+  // Security 6 이후로 Bean을 직접 등록하여 설정하게 바뀌었다.
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
@@ -35,7 +37,6 @@ public class SecurityConfig {
                             .permitAll()
                             .requestMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
                             .requestMatchers("/**").access("permitAll")
-
             )
             .formLogin(login->login.loginPage("/login").permitAll())
             .httpBasic(basic->basic.realmName("Taco Cloud"))
@@ -45,7 +46,6 @@ public class SecurityConfig {
 
     return httpSecurity.build();
   }
-
 
 //  @Override
 //  protected void configure(HttpSecurity http) throws Exception {
@@ -89,7 +89,7 @@ public class SecurityConfig {
     return NoOpPasswordEncoder.getInstance();
   }
 
-
+  //encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
   public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
     return auth.build();
