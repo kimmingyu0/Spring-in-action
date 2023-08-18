@@ -1,15 +1,15 @@
 package tacos;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Ignore("Reintroduce this test after fixing Spring Boot config")
+@Disabled("Reintroduce this test after fixing Spring Boot config")
 public class DesignTacoControllerBrowserTest {
   
   private static ChromeDriver browser;
@@ -33,24 +33,24 @@ public class DesignTacoControllerBrowserTest {
   @Autowired
   TestRestTemplate rest;
   
-  @BeforeClass
+  @BeforeAll
   public static void openBrowser() {
     browser = new ChromeDriver();
     browser.manage().timeouts()
         .implicitlyWait(10, TimeUnit.SECONDS);
   }
   
-  @AfterClass
+  @AfterAll
   public static void closeBrowser() {
     browser.quit();
   }
   
   @Test
-  @Ignore("TODO: Need to get around authentication in this test")
+  @Disabled("TODO: Need to get around authentication in this test")
   public void testDesignATacoPage() throws Exception {
     browser.get("http://localhost:" + port + "/design");
 
-    List<WebElement> ingredientGroups = browser.findElementsByClassName("ingredient-group");
+    List<WebElement> ingredientGroups = browser.findElements(By.className("ingredient-group"));
     assertEquals(5, ingredientGroups.size());
     
     WebElement wrapGroup = ingredientGroups.get(0);
