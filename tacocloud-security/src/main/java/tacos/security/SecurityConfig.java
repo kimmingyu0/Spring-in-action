@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation
              .authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web
              .builders.HttpSecurity;
 import org.springframework.security.config.annotation.web
@@ -41,7 +42,7 @@ public class SecurityConfig {
             .formLogin(login->login.loginPage("/login").permitAll())
             .httpBasic(basic->basic.realmName("Taco Cloud"))
             .logout(logout->logout.logoutSuccessUrl("/"))
-            .csrf(csrf->csrf.ignoringRequestMatchers("/h2-console/**", "/ingredients/**", "/design", "/orders/**"))
+            .csrf(csrf->csrf.ignoringRequestMatchers("/h2-console/**", "/ingredients/**", "/design", "/orders/**", "/api/**"))
             .headers(header->header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
     return httpSecurity.build();
@@ -90,9 +91,10 @@ public class SecurityConfig {
   }
 
   //encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
-  public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
-    return auth.build();
+  @Bean
+  AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
+//    auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
+    return auth.getAuthenticationManager();
   }
 //  @Override
 //  protected void configure(AuthenticationManagerBuilder auth)

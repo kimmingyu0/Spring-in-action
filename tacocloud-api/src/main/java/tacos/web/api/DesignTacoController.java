@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ import tacos.data.TacoRepository;
 public class DesignTacoController {
   private TacoRepository tacoRepo;
   
-//  @Autowired
-//  EntityLinks entityLinks;
+  @Autowired
+  EntityLinks entityLinks;
 
   public DesignTacoController(TacoRepository tacoRepo) {
     this.tacoRepo = tacoRepo;

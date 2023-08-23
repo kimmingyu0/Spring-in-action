@@ -35,8 +35,7 @@ spring:
     url: "jdbc:mysql://localhost:3306/tacocloud?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&tinyInt1isBit=false"
     username: root
     password: 1234
-    
-    
+
     hikari:
       auto-commit: false
       connection-test-query: SELECT 1
@@ -48,15 +47,38 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl.auto: update
+        hbm2ddl.auto: create-drop
         implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
         #physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     open-in-view: false
     show-sql: true
   
-
-
-
+  # The values given here are actually the default values. But they are explicitly
+  # set here as an example of setting the Kafka properties.
+#  kafka:
+#    bootstrap-servers:
+#      - localhost:9092
+#    template:
+#      default-topic: tacocloud.orders.topic
+#    producer:
+#      keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: prod
+#
+#
+#  datasource:
+#    url: jdbc:mysql://localhost/tacocloud
+#    username: tacouser
+#    password: tacopassword
+#
+#logging:
+#  level:
+#    tacos: WARN
 
 
 

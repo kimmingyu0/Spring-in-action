@@ -15,17 +15,23 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-      </list>
-    </option>
-    <option name="ignoredFiles">
-      <set>
         <option value="$PROJECT_DIR$/tacocloud-api/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-data/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-domain/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-security/pom.xml" />
-        <option value="$PROJECT_DIR$/tacocloud-ui/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-web/pom.xml" />
         <option value="$PROJECT_DIR$/tacos/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-restclient/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-messaging-jms/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-messaging-kafka/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-kitchen/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-messaging-rabbitmq/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-ui/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/tacocloud-ui/pom.xml" />
       </set>
     </option>
   </component>

@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>sia</groupId>
   	<artifactId>taco-cloud-parent</artifactId>
-		<version>0.0.6-SNAPSHOT</version>
+		<version>0.0.8-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -32,6 +32,11 @@
 		<dependency>
 			<groupId>sia</groupId>
 			<artifactId>tacocloud-domain</artifactId>
+			<version>${tacocloud.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>sia</groupId>
+			<artifactId>tacocloud-messaging-jms</artifactId>
 			<version>${tacocloud.version}</version>
 		</dependency>
 		<dependency>

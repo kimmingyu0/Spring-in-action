@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="Taco_Order")
+//@JsonIgnoreProperties(value = {"user"})
+/**@JsonIgnoreProperties vs @Jsonignore 특정 properfy 제외, 전체 제외*/
 public class Order implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -34,6 +38,7 @@ public class Order implements Serializable {
   private Date placedAt;
   
   @ManyToOne
+  @JsonIgnore
   private User user;
   
   @NotBlank(message="Delivery name is required")
