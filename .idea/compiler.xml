@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="tacocloud-kitchen" />
+        <module name="tacocloud-ui" />
         <module name="tacocloud-security" />
         <module name="tacocloud-restclient" />
         <module name="tacocloud-api" />
@@ -22,7 +23,6 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="tacocloud-kitchen (2)" target="11" />
-      <module name="tacocloud-ui" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

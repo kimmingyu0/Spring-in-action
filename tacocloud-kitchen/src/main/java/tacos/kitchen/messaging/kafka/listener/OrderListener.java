@@ -22,7 +22,7 @@ public class OrderListener {
     this.ui = ui;
   }
 
-  @KafkaListener(topics="tacocloud.orders.topic")
+  @KafkaListener(topics="tacocloud_orders")
   public void handle(Order order, ConsumerRecord<String, Order> record) {
     log.info("Received from partition {} with timestamp {}",
         record.partition(), record.timestamp());

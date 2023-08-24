@@ -55,15 +55,20 @@ spring:
   
   # The values given here are actually the default values. But they are explicitly
   # set here as an example of setting the Kafka properties.
-#  kafka:
-#    bootstrap-servers:
-#      - localhost:9092
-#    template:
-#      default-topic: tacocloud.orders.topic
-#    producer:
-#      keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
-#      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
-#
+---
+spring:
+  config:
+    activate:
+      on-profile: kafka-producer
+  kafka:
+    bootstrap-servers:
+      - 3.39.237.221:9092
+    template:
+      default-topic: tacocloud_orders
+    producer:
+      keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+---
 #---
 #spring:
 #  config:
@@ -112,7 +117,7 @@ spring:
 #  discount:
 #    codes:
 #      abcdef: 10
-      
+
 #logging:
 #  level:
 #    org.springframework.data.rest: debug

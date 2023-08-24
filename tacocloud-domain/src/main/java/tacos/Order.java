@@ -38,7 +38,7 @@ public class Order implements Serializable {
   private Date placedAt;
   
   @ManyToOne
-  @JsonIgnore
+//  @JsonIgnore
   private User user;
   
   @NotBlank(message="Delivery name is required")
