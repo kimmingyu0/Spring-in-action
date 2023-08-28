@@ -19,7 +19,7 @@ public class MessagingConfig {
     messageConverter.setTypeIdPropertyName("_typeId");
     
     Map<String, Class<?>> typeIdMappings = new HashMap<String, Class<?>>();
-    typeIdMappings.put("order", Order.class);
+    typeIdMappings.put("order", Order.class);// TacoCloud-domain -Serializable
     messageConverter.setTypeIdMappings(typeIdMappings);
     
     return messageConverter;
