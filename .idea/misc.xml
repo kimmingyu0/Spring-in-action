@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenCompilerTasksManager">
@@ -6,6 +7,10 @@
         <MavenCompilerTask>
           <option name="goal" value="clean" />
           <option name="projectPath" value="$PROJECT_DIR$/pom.xml" />
+        </MavenCompilerTask>
+        <MavenCompilerTask>
+          <option name="goal" value="clean" />
+          <option name="projectPath" value="$PROJECT_DIR$/simple-flow/pom.xml" />
         </MavenCompilerTask>
       </set>
     </option>
@@ -26,8 +31,15 @@
         <option value="$PROJECT_DIR$/tacocloud-kitchen/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-messaging-rabbitmq/pom.xml" />
         <option value="$PROJECT_DIR$/tacocloud-ui/pom.xml" />
+        <option value="$PROJECT_DIR$/tacocloud-email/pom.xml" />
+        <option value="$PROJECT_DIR$/simple-flow/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/simple-flow/pom.xml" />
+      </set>
+    </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK" />
 </project>

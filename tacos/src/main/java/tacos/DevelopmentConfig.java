@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import tacos.Ingredient.Type;
 import tacos.data.IngredientRepository;
+import tacos.data.PaymentMethodRepository;
 import tacos.data.TacoRepository;
 import tacos.data.UserRepository;
 
@@ -19,7 +20,8 @@ public class DevelopmentConfig {
 
   @Bean
   public CommandLineRunner dataLoader(IngredientRepository repo,
-        UserRepository userRepo, PasswordEncoder encoder, TacoRepository tacoRepo) { // user repo for ease of testing with a built-in user
+                                      UserRepository userRepo, PasswordEncoder encoder, TacoRepository tacoRepo,
+                                      PaymentMethodRepository paymentMethodRepo) { // user repo for ease of testing with a built-in user
     return new CommandLineRunner() {
       @Override
       public void run(String... args) throws Exception {
@@ -43,12 +45,14 @@ public class DevelopmentConfig {
         repo.save(jack);
         repo.save(salsa);
         repo.save(sourCream);
-        
-        
-        userRepo.save(new User("habuma", encoder.encode("password"), 
-            "Craig Walls", "123 North Street", "Cross Roads", "TX", 
-            "76227", "123-123-1234"));
-        
+
+        User savedUser = userRepo.save(new User("habuma", encoder.encode("password"),
+                "Craig Walls", "123 North Street", "Cross Roads", "TX",
+                "76227", "123-123-1234", "craig@habuma.com"));
+
+        paymentMethodRepo.save(new PaymentMethod(savedUser, "4111111111111111", "321", "10/25"));
+
+
         Taco taco1 = new Taco();
         taco1.setName("Carnivore");
         taco1.setIngredients(Arrays.asList(flourTortilla, groundBeef, carnitas, sourCream, salsa, cheddar));
@@ -67,5 +71,5 @@ public class DevelopmentConfig {
       }
     };
   }
-  
+
 }
