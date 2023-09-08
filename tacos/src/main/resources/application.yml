@@ -11,24 +11,13 @@ taco:
   discount:
     codes:
       abcdef: 10
-      
-#logging:
-#  level:
-#    org.springframework.data.rest: debug
 
 spring:
   data:
     rest:
       base-path: /api
-
-#---
-#spring:
-#  profiles: prod
-  
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/tacocloud
-#    username: root
-#    password: 1234
+    mongodb:
+      uri: mongodb://localhost:27017/test
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -42,6 +31,7 @@ spring:
       minimum-idle: 10
       maximum-pool-size: 50
       pool-name: pool-tacocloud_db
+
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
@@ -62,31 +52,13 @@ spring:
       on-profile: kafka-producer
   kafka:
     bootstrap-servers:
-      - 54.180.153.156
+      - 54.180.153.156:9092
     template:
       default-topic: tacocloud_orders
     producer:
       keySerializer: org.springframework.kafka.support.serializer.JsonSerializer
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
 ---
-#---
-#spring:
-#  config:
-#    activate:
-#      on-profile: prod
-#
-#
-#  datasource:
-#    url: jdbc:mysql://localhost/tacocloud
-#    username: tacouser
-#    password: tacopassword
-#
-#logging:
-#  level:
-#    tacos: WARN
-
-
-
 
 
 

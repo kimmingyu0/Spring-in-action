@@ -21,14 +21,12 @@ import static org.springframework.security.web.server.header.XFrameOptionsServer
 @EnableWebFluxSecurity
 public class SecurityConfig implements WebFluxConfigurer {
 
+    /*WebFlux 에서 SpringSecurity config*/
     private final UserRepositoryUserDetailsService userDetailsService;
 
     public SecurityConfig(UserRepositoryUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
-  // HttpSecurity, WebSecurity를 원래는 WebSecurityConfigurerAdapter 상속받아 Override 하였지만,
-  // Security 6 이후로 Bean을 직접 등록하여 설정하게 바뀌었다.
 
   @Bean
   public SecurityWebFilterChain filterChain(ServerHttpSecurity httpSecurity) throws Exception {
@@ -36,7 +34,7 @@ public class SecurityConfig implements WebFluxConfigurer {
             .authorizeExchange(
                     exchange ->
                             exchange.pathMatchers(HttpMethod.OPTIONS).permitAll()
-                                    .pathMatchers("/design", "/orders/**")
+                                    .pathMatchers("/design", "/orders/**", "login")
                                     .permitAll()
                                     .pathMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
                                     .anyExchange().permitAll()
@@ -48,6 +46,29 @@ public class SecurityConfig implements WebFluxConfigurer {
     return httpSecurity.build();
   }
 
+      @Override
+      public void addCorsMappings(CorsRegistry corsRegistry) {
+        corsRegistry.addMapping("/**")
+                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST")
+                .allowedHeaders("*")
+                .exposedHeaders("*");
+      }
+  @Bean
+  public PasswordEncoder encoder() {
+//    return new StandardPasswordEncoder("53cr3t");
+    return NoOpPasswordEncoder.getInstance();
+  }
+
+    @Bean
+    public ReactiveUserDetailsService reactiveUserDetailsService() {
+        return userDetailsService;
+    }
+
+    /*WebMVC 에서 SpringSecurity Config*/
+//
+//  HttpSecurity, WebSecurity를 원래는 WebSecurityConfigurerAdapter 상속받아 Override 하였지만,
+//  Security 6 이후로 Bean을 직접 등록하여 설정하게 바뀌었다.
 //  @Bean
 //  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 //    httpSecurity
@@ -79,28 +100,11 @@ public class SecurityConfig implements WebFluxConfigurer {
 //    source.registerCorsConfiguration("/**", configuration);
 //    return source;
 //  }
-      @Override
-      public void addCorsMappings(CorsRegistry corsRegistry) {
-        corsRegistry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200")
-                .allowedMethods("GET", "POST")
-                .allowedHeaders("*")
-                .exposedHeaders("*");
-      }
-  @Bean
-  public PasswordEncoder encoder() {
-//    return new StandardPasswordEncoder("53cr3t");
-    return NoOpPasswordEncoder.getInstance();
-  }
 
-    @Bean
-    public ReactiveUserDetailsService reactiveUserDetailsService() {
-        return userDetailsService;
-    }
-
-  //encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
+//  encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
 //  @Bean
 //  AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
 //    return auth.getAuthenticationManager();
 //  }
+
 }

@@ -13,7 +13,7 @@ spring:
 
   kafka:
     bootstrap-servers:
-    - 54.180.153.156
+    - 54.180.153.156:9092
     template:
       default-topic: tacocloud_orders
     consumer:

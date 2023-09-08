@@ -43,12 +43,12 @@ public class OrderApiController {
     return repo.findAll();
   }
 
-  @PostMapping(consumes="application/json")
-  @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Order> postOrder(@RequestBody Order order) {
-    orderMessages.sendOrder(order);
-    return repo.save(order);
-  }
+    @PostMapping(consumes="application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Order> postOrder(@RequestBody Mono<Order> order) {
+        return order.doOnNext(orderMessages::sendOrder)
+                .flatMap(repo::save);
+    }
 
   @PostMapping(path="fromEmail", consumes="application/json")
   @ResponseStatus(HttpStatus.CREATED)
