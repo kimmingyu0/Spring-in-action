@@ -1,129 +1,106 @@
 package tacos.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation
-             .authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web
-             .builders.HttpSecurity;
-import org.springframework.security.config.annotation.web
-                        .configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
-import java.util.Arrays;
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.*;
 
 @SuppressWarnings("deprecation")
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-  
-  @Autowired
-  private UserDetailsService userDetailsService;
+@EnableWebFluxSecurity
+public class SecurityConfig implements WebFluxConfigurer {
+
+    private final UserRepositoryUserDetailsService userDetailsService;
+
+    public SecurityConfig(UserRepositoryUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
   // HttpSecurity, WebSecurity를 원래는 WebSecurityConfigurerAdapter 상속받아 Override 하였지만,
   // Security 6 이후로 Bean을 직접 등록하여 설정하게 바뀌었다.
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+  public SecurityWebFilterChain filterChain(ServerHttpSecurity httpSecurity) throws Exception {
     httpSecurity
-            .authorizeRequests(
-                    request ->
-                            request.requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                    .requestMatchers("/design", "/orders/**")
+            .authorizeExchange(
+                    exchange ->
+                            exchange.pathMatchers(HttpMethod.OPTIONS).permitAll()
+                                    .pathMatchers("/design", "/orders/**")
                                     .permitAll()
-                                    .requestMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
-                                    .requestMatchers("/**").access("permitAll")
+                                    .pathMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
+                                    .anyExchange().permitAll()
             )
-//            .formLogin(login -> login.loginPage("/login").permitAll())
-            .httpBasic(basic -> basic.realmName("Taco Cloud"))
-            .logout(logout -> logout.logoutSuccessUrl("/"))
-            .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/ingredients/**", "/design", "/orders/**", "/api/**", "/tacos/**", "/register/**", "/customLogin"))
-            .headers(header->header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+            .httpBasic(withDefaults())
+            .logout(logout->logout.requiresLogout(new PathPatternParserServerWebExchangeMatcher("/logout")))
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .headers(header->header.frameOptions(frameOption->frameOption.mode(Mode.SAMEORIGIN)));
     return httpSecurity.build();
   }
 
-  @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowCredentials(true);
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-    configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
-    configuration.setExposedHeaders(Arrays.asList("*"));
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-  }
-
-//  @Override
-//  protected void configure(HttpSecurity http) throws Exception {
-//
-//    http
-//      .authorizeRequests()
-//        .antMatchers(HttpMethod.OPTIONS).permitAll() // needed for Angular/CORS
-//        .antMatchers("/design", "/orders/**")
-//            .permitAll()
-//            //.access("hasRole('ROLE_USER')")
-//        .antMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
-//        .antMatchers("/**").access("permitAll")
-//
-//      .and()
-//        .formLogin()
-//          .loginPage("/login")
-//
-//      .and()
-//        .httpBasic()
-//          .realmName("Taco Cloud")
-//
-//      .and()
-//        .logout()
-//          .logoutSuccessUrl("/")
-//
-//      .and()
-//        .csrf()
-//          .ignoringAntMatchers("/h2-console/**", "/ingredients/**", "/design", "/orders/**")
-//
-//      // Allow pages to be loaded in frames from the same origin; needed for H2-Console
-//      .and()
-//        .headers()
-//          .frameOptions()
-//            .sameOrigin()
-//      ;
+//  @Bean
+//  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+//    httpSecurity
+//            .authorizeRequests(
+//                    request ->
+//                            request.requestMatchers(HttpMethod.OPTIONS).permitAll()
+//                                    .requestMatchers("/design", "/orders/**")
+//                                    .permitAll()
+//                                    .requestMatchers(HttpMethod.PATCH, "/ingredients").permitAll()
+//                                    .requestMatchers("/**").access("permitAll")
+//            )
+//            .httpBasic(basic -> basic.realmName("Taco Cloud"))
+//            .logout(logout -> logout.logoutSuccessUrl("/"))
+//            .cors(Customizer.withDefaults())
+//            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/ingredients/**", "/design", "/orders/**", "/api/**", "/tacos/**", "/register/**", "/customLogin/**"))
+//            .headers(header->header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+//    return httpSecurity.build();
 //  }
 
+//  @Bean
+//  CorsConfigurationSource corsConfigurationSource() {
+//    CorsConfiguration configuration = new CorsConfiguration();
+//    configuration.setAllowCredentials(true);
+//    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+//    configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//    configuration.setAllowedHeaders(Arrays.asList("*"));
+//    configuration.setExposedHeaders(Arrays.asList("*"));
+//    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//    source.registerCorsConfiguration("/**", configuration);
+//    return source;
+//  }
+      @Override
+      public void addCorsMappings(CorsRegistry corsRegistry) {
+        corsRegistry.addMapping("/**")
+                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST")
+                .allowedHeaders("*")
+                .exposedHeaders("*");
+      }
   @Bean
   public PasswordEncoder encoder() {
 //    return new StandardPasswordEncoder("53cr3t");
     return NoOpPasswordEncoder.getInstance();
   }
 
-  //encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
-  @Bean
-  AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
-//    auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
-    return auth.getAuthenticationManager();
-  }
-//  @Override
-//  protected void configure(AuthenticationManagerBuilder auth)
-//      throws Exception {
-//
-//    auth
-//      .userDetailsService(userDetailsService)
-//      .passwordEncoder(encoder());
-//
-//  }
+    @Bean
+    public ReactiveUserDetailsService reactiveUserDetailsService() {
+        return userDetailsService;
+    }
 
+  //encoder , userDetailsService 둘 다 컨테이너에 등록되어있어서 자동 설정해줌.
+//  @Bean
+//  AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
+//    return auth.getAuthenticationManager();
+//  }
 }

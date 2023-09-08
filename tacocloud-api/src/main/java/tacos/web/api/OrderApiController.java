@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import tacos.Order;
 import tacos.data.OrderRepository;
 import tacos.messaging.OrderMessagingService;
 
 @RestController
-@RequestMapping(path="/orders",
-        produces="application/json")
+@RequestMapping(path="/orders", produces="application/json")
 @CrossOrigin(origins="*")
 public class OrderApiController {
 
@@ -38,65 +39,68 @@ public class OrderApiController {
   }
 
   @GetMapping(produces="application/json")
-  public Iterable<Order> allOrders() {
+  public Flux<Order> allOrders() {
     return repo.findAll();
   }
 
   @PostMapping(consumes="application/json")
   @ResponseStatus(HttpStatus.CREATED)
-  public Order postOrder(@RequestBody Order order) {
+  public Mono<Order> postOrder(@RequestBody Order order) {
     orderMessages.sendOrder(order);
     return repo.save(order);
   }
 
   @PostMapping(path="fromEmail", consumes="application/json")
   @ResponseStatus(HttpStatus.CREATED)
-  public Order postOrderFromEmail(@RequestBody EmailOrder emailOrder) {
-    Order order = emailOrderService.convertEmailOrderToDomainOrder(emailOrder);
-    orderMessages.sendOrder(order);
-    return repo.save(order);
+  public Mono<Order> postOrderFromEmail(@RequestBody Mono<EmailOrder> emailOrder) {
+    Mono<Order> order = emailOrderService.convertEmailOrderToDomainOrder(emailOrder);
+    order.subscribe(orderMessages::sendOrder);
+    return order.flatMap(repo::save);
   }
 
   @PutMapping(path="/{orderId}", consumes="application/json")
-  public Order putOrder(@RequestBody Order order) {
-    return repo.save(order);
+  public Mono<Order> putOrder(@RequestBody Mono<Order> order) {
+    return order.flatMap(repo::save);
   }
 
   @PatchMapping(path="/{orderId}", consumes="application/json")
-  public Order patchOrder(@PathVariable("orderId") Long orderId,
+  public Mono<Order> patchOrder(@PathVariable("orderId") String orderId,
                           @RequestBody Order patch) {
 
-    Order order = repo.findById(orderId).get();
-    if (patch.getDeliveryName() != null) {
-      order.setDeliveryName(patch.getDeliveryName());
-    }
-    if (patch.getDeliveryStreet() != null) {
-      order.setDeliveryStreet(patch.getDeliveryStreet());
-    }
-    if (patch.getDeliveryCity() != null) {
-      order.setDeliveryCity(patch.getDeliveryCity());
-    }
-    if (patch.getDeliveryState() != null) {
-      order.setDeliveryState(patch.getDeliveryState());
-    }
-    if (patch.getDeliveryZip() != null) {
-      order.setDeliveryZip(patch.getDeliveryState());
-    }
-    if (patch.getCcNumber() != null) {
-      order.setCcNumber(patch.getCcNumber());
-    }
-    if (patch.getCcExpiration() != null) {
-      order.setCcExpiration(patch.getCcExpiration());
-    }
-    if (patch.getCcCVV() != null) {
-      order.setCcCVV(patch.getCcCVV());
-    }
-    return repo.save(order);
+    return repo.findById(orderId)
+            .map(order -> {
+              if (patch.getDeliveryName() != null) {
+                order.setDeliveryName(patch.getDeliveryName());
+              }
+              if (patch.getDeliveryStreet() != null) {
+                order.setDeliveryStreet(patch.getDeliveryStreet());
+              }
+              if (patch.getDeliveryCity() != null) {
+                order.setDeliveryCity(patch.getDeliveryCity());
+              }
+              if (patch.getDeliveryState() != null) {
+                order.setDeliveryState(patch.getDeliveryState());
+              }
+              if (patch.getDeliveryZip() != null) {
+                order.setDeliveryZip(patch.getDeliveryState());
+              }
+              if (patch.getCcNumber() != null) {
+                order.setCcNumber(patch.getCcNumber());
+              }
+              if (patch.getCcExpiration() != null) {
+                order.setCcExpiration(patch.getCcExpiration());
+              }
+              if (patch.getCcCVV() != null) {
+                order.setCcCVV(patch.getCcCVV());
+              }
+              return order;
+            })
+            .flatMap(repo::save);
   }
 
   @DeleteMapping("/{orderId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteOrder(@PathVariable("orderId") Long orderId) {
+  public void deleteOrder(@PathVariable("orderId") String orderId) {
     try {
       repo.deleteById(orderId);
     } catch (EmptyResultDataAccessException e) {}

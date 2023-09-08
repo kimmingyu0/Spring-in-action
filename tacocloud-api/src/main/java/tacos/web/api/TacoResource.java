@@ -23,16 +23,14 @@ public class TacoResource extends RepresentationModel<TacoResource> {
   private final Date createdAt;
 
   @Getter
-  private final List<IngredientResource> ingredients;
+  private final CollectionModel<IngredientResource> ingredients;
   
   public TacoResource(Taco taco) {
     this.name = taco.getName();
     this.createdAt = taco.getCreatedAt();
-    
-    CollectionModel<IngredientResource> ingredientResource =  
+
+    this.ingredients =
             ingredientAssembler.toCollectionModel(taco.getIngredients());
-    
-    this.ingredients = (List<IngredientResource>) ingredientResource.getContent();
     
 //	    this.ingredients = 
 //	        ingredientAssembler.toCollectionModel(taco.getIngredients()).getContent();

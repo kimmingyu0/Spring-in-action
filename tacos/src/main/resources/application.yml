@@ -62,7 +62,7 @@ spring:
       on-profile: kafka-producer
   kafka:
     bootstrap-servers:
-      - 3.39.237.221:9092
+      - 54.180.153.156
     template:
       default-topic: tacocloud_orders
     producer:

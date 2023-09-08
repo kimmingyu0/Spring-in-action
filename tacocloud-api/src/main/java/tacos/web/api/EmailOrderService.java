@@ -1,16 +1,21 @@
 package tacos.web.api;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
-import tacos.*;
+
+import reactor.core.publisher.Mono;
+import tacos.Ingredient;
+import tacos.Order;
+import tacos.PaymentMethod;
+import tacos.Taco;
+import tacos.User;
 import tacos.data.IngredientRepository;
 import tacos.data.PaymentMethodRepository;
 import tacos.data.UserRepository;
 import tacos.web.api.EmailOrder.EmailTaco;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmailOrderService {
@@ -26,42 +31,51 @@ public class EmailOrderService {
     this.paymentMethodRepo = paymentMethodRepo;
   }
 
-  public Order convertEmailOrderToDomainOrder(EmailOrder emailOrder) {
+  public Mono<Order> convertEmailOrderToDomainOrder(Mono<EmailOrder> emailOrder) {
     // TODO: Probably should handle unhappy case where email address doesn't match a given user or
     //       where the user doesn't have at least one payment method.
-    User user = userRepo.findByEmail(emailOrder.getEmail());
-    PaymentMethod paymentMethod = paymentMethodRepo.findByUserId(user.getId());
 
-    Order order = new Order();
-    order.setUser(user);
-    order.setCcNumber(paymentMethod.getCcNumber());
-    order.setCcCVV(paymentMethod.getCcCVV());
-    order.setCcExpiration(paymentMethod.getCcExpiration());
-    order.setDeliveryName(user.getFullname());
-    order.setDeliveryStreet(user.getStreet());
-    order.setDeliveryCity(user.getCity());
-    order.setDeliveryState(user.getState());
-    order.setDeliveryZip(user.getZip());
-    order.setPlacedAt(new Date());
+    return emailOrder.flatMap(eOrder -> {
+      Mono<User> userMono = userRepo.findByEmail(eOrder.getEmail());
 
-    // TODO: Handle unhappy case where a given ingredient doesn't match
-    List<EmailTaco> emailTacos = emailOrder.getTacos();
-    for (EmailTaco emailTaco : emailTacos) {
-      Taco taco = new Taco();
-      taco.setName(emailTaco.getName());
-      List<String> ingredientIds = emailTaco.getIngredients();
-      List<Ingredient> ingredients = new ArrayList<>();
-      for (String ingredientId : ingredientIds) {
-        Optional<Ingredient> optionalIngredient = ingredientRepo.findById(ingredientId);
-        if (optionalIngredient.isPresent()) {
-          ingredients.add(optionalIngredient.get());
-        }
-      }
-      taco.setIngredients(ingredients);
-      order.addDesign(taco);
-    }
+      Mono<PaymentMethod> paymentMono = userMono.flatMap(user -> {
+        return paymentMethodRepo.findByUserId(user.getId());
+      });
+      return Mono.zip(userMono, paymentMono)
+              .flatMap(tuple -> {
+                User user = tuple.getT1();
+                PaymentMethod paymentMethod = tuple.getT2();
+                Order order = new Order();
+                order.setUser(user);
+                order.setCcNumber(paymentMethod.getCcNumber());
+                order.setCcCVV(paymentMethod.getCcCVV());
+                order.setCcExpiration(paymentMethod.getCcExpiration());
+                order.setDeliveryName(user.getFullname());
+                order.setDeliveryStreet(user.getStreet());
+                order.setDeliveryCity(user.getCity());
+                order.setDeliveryState(user.getState());
+                order.setDeliveryZip(user.getZip());
+                order.setPlacedAt(new Date());
 
-    return order;
+                return emailOrder.map(eOrd -> {
+                  List<EmailTaco> emailTacos = eOrd.getTacos();
+                  for (EmailTaco emailTaco : emailTacos) {
+                    List<String> ingredientIds = emailTaco.getIngredients();
+                    List<Ingredient> ingredients = new ArrayList<>();
+                    for (String ingredientId : ingredientIds) {
+                      Mono<Ingredient> ingredientMono = ingredientRepo.findById(ingredientId);
+                      ingredientMono.subscribe(ingredient ->
+                              ingredients.add(ingredient));
+                    }
+                    Taco taco = new Taco();
+                    taco.setName(emailTaco.getName());
+                    taco.setIngredients(ingredients);
+                    order.addDesign(taco);
+                  }
+                  return order;
+                });
+              });
+    });
   }
 
 }

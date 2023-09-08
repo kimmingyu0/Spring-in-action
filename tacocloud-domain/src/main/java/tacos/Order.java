@@ -5,15 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,10 +13,14 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name="Taco_Order")
+//@Entity
+//@Table(name="Taco_Order")
+@Document
+
 //@JsonIgnoreProperties(value = {"user"})
 /**@JsonIgnoreProperties vs @Jsonignore 특정 properfy 제외, 전체 제외*/
 public class Order implements Serializable {
@@ -32,12 +28,10 @@ public class Order implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
-  private Long id;
+  private String id;
   
   private Date placedAt;
   
-  @ManyToOne
   @JsonIgnore
   private User user;
   @NotBlank(message="Delivery name is required")
@@ -59,14 +53,12 @@ public class Order implements Serializable {
   @Digits(integer=3, fraction=0, message="Invalid CVV")
   private String ccCVV;
 
-  @ManyToMany(targetEntity=Taco.class)
   private List<Taco> tacos = new ArrayList<>();
   
   public void addDesign(Taco design) {
     this.tacos.add(design);
   }
   
-  @PrePersist
   void placedAt() {
     this.placedAt = new Date();
   }
